@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "CkAmaury\\PhpCurl\\": "src"
+            "CkAmaury\\WorkConnection\\": "src"
         }
     }
 }
