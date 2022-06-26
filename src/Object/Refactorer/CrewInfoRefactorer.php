@@ -42,15 +42,17 @@ class CrewInfoRefactorer {
         if(is_null($qualifications)) return;
         $array = array();
         foreach($qualifications as $qualificationItem){
-            $qualification = new CrewInfoQualification();
-            $qualification
-                ->setId(ArrayUtils::get('quaId',$qualificationItem))
-                ->setQualification(ArrayUtils::get('aircraftTypeCode',$qualificationItem))
-                ->setFunction(ArrayUtils::get('specialityCode',$qualificationItem))
-                ->setStartDate($this->convertDate((ArrayUtils::get('beginQualifDate',$qualificationItem))))
-                ->setEndDate($this->convertDate((ArrayUtils::get('endQualifDate',$qualificationItem))));
+            if(array_key_exists('specialityCode',$qualificationItem)){
+                $qualification = new CrewInfoQualification();
+                $qualification
+                    ->setId(ArrayUtils::get('quaId',$qualificationItem))
+                    ->setQualification(ArrayUtils::get('aircraftTypeCode',$qualificationItem))
+                    ->setFunction(ArrayUtils::get('specialityCode',$qualificationItem))
+                    ->setStartDate($this->convertDate((ArrayUtils::get('beginQualifDate',$qualificationItem))))
+                    ->setEndDate($this->convertDate((ArrayUtils::get('endQualifDate',$qualificationItem))));
 
-            $array[] = $qualification;
+                $array[] = $qualification;
+            }
         }
 
         $this->sortArray($array);
@@ -107,7 +109,7 @@ class CrewInfoRefactorer {
         if($pDate == 253370764800000){
             return null;
         }
-        return (new DateTime())->setMicroTimestamp($pDate)->eraseTime();
+        return (new DateTime())->setMicroTimestamp($pDate)->setTimezone('Europe/Paris');
     }
     private function sortArray(&$array){
         usort($array, function ($item1,$item2) {
