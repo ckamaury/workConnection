@@ -14,9 +14,10 @@ class CrewInfo {
     private DateTime $entryDate;
     private bool $isInstructor;
     private ?DateTime $atplDate;
-    private array $qualifications;
-    private array $assignments;
-    private array $experiences;
+
+    private array $qualifications = array();
+    private array $assignments = array();
+    private array $experiences = array();
 
     public function getLastName(): string {
         return $this->lastName;
