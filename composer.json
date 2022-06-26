@@ -2,7 +2,7 @@
     "name": "ckamaury/workconnection",
     "description": "PHP Connection functions.",
     "type": "library",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "minimum-stability": "stable",
     "authors": [
         {

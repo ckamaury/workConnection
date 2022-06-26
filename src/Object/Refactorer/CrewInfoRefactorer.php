@@ -109,7 +109,8 @@ class CrewInfoRefactorer {
         if($pDate == 253370764800000){
             return null;
         }
-        return (new DateTime())->setMicroTimestamp($pDate)->setTimezone('Europe/Paris');
+        //FRENCH DATE --> UTC 
+        return (new DateTime())->setMicroTimestamp($pDate)->nextDay()->eraseTime();
     }
     private function sortArray(&$array){
         usort($array, function ($item1,$item2) {
