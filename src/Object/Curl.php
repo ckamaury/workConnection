@@ -165,6 +165,10 @@ class Curl{
         $this->execute();
         return $this->getResponseJson();
     }
+    public function executeAndReturnResponse(){
+        $this->execute();
+        return $this->getResponse();
+    }
 
 
     public function setJsonEncodePost(bool $json_encode_post): self {

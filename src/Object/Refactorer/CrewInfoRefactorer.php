@@ -30,8 +30,8 @@ class CrewInfoRefactorer {
 
         $this->refactorQualifications(ArrayUtils::get('qualificationsList',$data));
         $this->refactorAssignments(array_merge(
-            ArrayUtils::get('opeAssignments',$data),
-            ArrayUtils::get('futureOpeAssignments',$data) ?? array())
+                (ArrayUtils::get('opeAssignments',$data) ?? array()),
+                (ArrayUtils::get('futureOpeAssignments',$data) ?? array()))
         );
         $this->refactorExperiences(ArrayUtils::get('recentExperiences',$data));
 
@@ -39,6 +39,7 @@ class CrewInfoRefactorer {
     }
 
     private function refactorQualifications(?array $qualifications){
+        if(is_null($qualifications)) return;
         $array = array();
         foreach($qualifications as $qualificationItem){
             $qualification = new CrewInfoQualification();
@@ -56,6 +57,7 @@ class CrewInfoRefactorer {
         $this->info->setQualifications($array);
     }
     private function refactorAssignments(?array $assignments){
+        if(is_null($assignments)) return;
         $array = array();
         foreach($assignments as $assignmentItem){
             $assignment = new CrewInfoAssignment();
@@ -72,6 +74,7 @@ class CrewInfoRefactorer {
         $this->info->setAssignments($array);
     }
     private function refactorExperiences(?array $experiences){
+        if(is_null($experiences)) return;
         $array = array();
         foreach($experiences as $experienceItem){
             $experience = new CrewInfoExperience();
@@ -89,7 +92,7 @@ class CrewInfoRefactorer {
     }
 
     private function findATPL(?array $licenses){
-
+        if(is_null($licenses)) return null;
         foreach($licenses as $license){
             if(ArrayUtils::get('licenseType',$license) == 'TL'){
                 return $this->convertDate(ArrayUtils::get('beginValidityDate',$license));

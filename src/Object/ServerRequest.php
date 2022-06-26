@@ -11,6 +11,7 @@ use CkAmaury\PhpMagicFunctions\ArrayUtils;
 class ServerRequest{
 
     private Cookie $cookie;
+    private bool $isCustomCookie;
 
     public function __construct(){
         $this->initCookie();
@@ -18,6 +19,7 @@ class ServerRequest{
     private function initCookie(){
         $this->cookie = new Cookie();
         $this->cookie->loadCustomCookie();
+        $this->isCustomCookie = true;
     }
 
     private function createCurl($url) : Curl{
@@ -29,29 +31,37 @@ class ServerRequest{
         return $curl;
     }
 
+    public function setLogin(string $login){
+        $this->cookie->setLogin($login)->loadLoginCookie();
+        $this->isCustomCookie = false;
+    }
+
     public function executeAndReturnJson(Curl $curl){
         $response = $curl->executeAndReturnJson();
-        if(is_null($response) || array_key_exists('www-authenticate',$response)){
-            $curl->getCookie()->delete();
-            $this->initCookie();
-            $curl->setCookie($this->cookie);
-            $curl->resetExecuted();
-            $this->executeAndReturnJson($curl);
+        if($this->checkIfNeedToTryAgain($curl,$response)){
+            $response = $this->executeAndReturnJson($curl);
         }
         return $response;
     }
     public function executeAndReturnResponse(Curl $curl){
-        $curl->execute();
-        $response = $curl->getResponse();
-        if(is_null($response)){
+        $response = $curl->executeAndReturnResponse();
+        if($this->checkIfNeedToTryAgain($curl,$response)){
+            $response = $this->executeAndReturnResponse($curl);
+        }
+        return $response;
+    }
+
+    private function checkIfNeedToTryAgain(Curl $curl,$response){
+        if($this->isCustomCookie && (
+                is_null($response) || array_key_exists('www-authenticate',$response)
+            )){
             $curl->getCookie()->delete();
             $this->initCookie();
             $curl->setCookie($this->cookie);
             $curl->resetExecuted();
-            $this->executeAndReturnResponse($curl);
+            return TRUE;
         }
-
-        return $response;
+        return FALSE;
     }
 
     public function requestCCO_Numbers(){
