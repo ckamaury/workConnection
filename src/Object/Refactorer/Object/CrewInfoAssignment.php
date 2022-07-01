@@ -9,6 +9,8 @@ class CrewInfoAssignment {
     private int $id;
     private string $base;
     private string $function;
+    private bool $isInstructor = false;
+    private bool $isTrainee = false;
     private DateTime $startDate;
     private ?DateTime $endDate = null;
 
@@ -33,6 +35,22 @@ class CrewInfoAssignment {
     }
     public function setFunction(string $function): self {
         $this->function = $function;
+        return $this;
+    }
+
+    public function isInstructor(): bool {
+        return $this->isInstructor;
+    }
+    public function setIsInstructor(bool $isInstructor): self {
+        $this->isInstructor = $isInstructor;
+        return $this;
+    }
+
+    public function isTrainee(): bool {
+        return $this->isTrainee;
+    }
+    public function setIsTrainee(bool $isTrainee): self {
+        $this->isTrainee = $isTrainee;
         return $this;
     }
 
