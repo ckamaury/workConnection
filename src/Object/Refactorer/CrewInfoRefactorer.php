@@ -83,6 +83,7 @@ class CrewInfoRefactorer {
             $experience
                 ->setIsFlight(ArrayUtils::get('activityType',$experienceItem) == 'VOL')
                 ->setCode(ArrayUtils::get('company',$experienceItem).ArrayUtils::get('lineNumber',$experienceItem))
+                ->setAirport(ArrayUtils::get('arrivalStop',$experienceItem))
                 ->setTakeoff(ArrayUtils::get('nbTakeOff',$experienceItem))
                 ->setLanding(ArrayUtils::get('nbLand',$experienceItem))
                 ->setStartDate($this->convertDate((ArrayUtils::get('experienceDate',$experienceItem))));
