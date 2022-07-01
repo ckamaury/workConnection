@@ -54,6 +54,7 @@ class CrewInfoQualification {
         $this->function = $function;
         return $this;
     }
+
     public function isFirstOfficer():bool{
         return $this->function == self::FIRST_OFFICER;
     }

@@ -10,7 +10,6 @@ class IcartInfo{
     private string $firstName;
     private string $matricule;
     private string $function;
-    private array $qualifications;
     private bool $isAirFrancePilot;
     private bool $isTransaviaPilot;
     private bool $isTrainee;
@@ -28,6 +27,10 @@ class IcartInfo{
     private ?DateTime $amortissementDate;
     private ?int $lcpRank;
     private int $tta;
+
+
+    /** @var IcartInfoQualification[] */
+    private array $qualifications;
 
     public function getLastName(): string {
         return $this->lastName;
