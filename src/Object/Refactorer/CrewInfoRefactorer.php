@@ -62,6 +62,9 @@ class CrewInfoRefactorer {
         if(is_null($assignments)) return;
         $array = array();
         foreach($assignments as $assignmentItem){
+
+            if(is_null(ArrayUtils::get('baseCode',$assignmentItem))) continue;
+
             $assignment = new CrewInfoAssignment();
             $assignment
                 ->setId(ArrayUtils::get('opaId',$assignmentItem))
