@@ -12,6 +12,7 @@ class CrewInfoExperience {
     private DateTime $startDate;
     private int $takeoff;
     private int $landing;
+    private string $aircraftSimulator;
 
     public function isFlight(): bool {
         return $this->isFlight;
@@ -24,16 +25,16 @@ class CrewInfoExperience {
     public function getAirport(): string {
         return $this->airport;
     }
-    public function setAirport(string $airport): self {
-        $this->airport = $airport;
+    public function setAirport(?string $airport): self {
+        $this->airport = $airport ?? '';
         return $this;
     }
 
     public function getCode(): string {
         return $this->code;
     }
-    public function setCode(string $code): self {
-        $this->code = $code;
+    public function setCode(?string $code): self {
+        $this->code = $code ?? '';
         return $this;
     }
 
@@ -60,5 +61,15 @@ class CrewInfoExperience {
         $this->landing = $landing;
         return $this;
     }
+
+    public function getAircraftSimulator(): string {
+        return $this->aircraftSimulator;
+    }
+    public function setAircraftSimulator(?string $aircraftSimulator): self {
+        $this->aircraftSimulator = $aircraftSimulator ?? '';
+        return $this;
+    }
+
+
 
 }

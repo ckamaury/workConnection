@@ -86,6 +86,7 @@ class CrewInfoRefactorer {
                 ->setAirport(ArrayUtils::get('arrivalStop',$experienceItem))
                 ->setTakeoff(ArrayUtils::get('nbTakeOff',$experienceItem))
                 ->setLanding(ArrayUtils::get('nbLand',$experienceItem))
+                ->setAircraftSimulator(ArrayUtils::get('aircraftTypeCode',$experienceItem))
                 ->setStartDate($this->convertDate((ArrayUtils::get('experienceDate',$experienceItem))));
 
             $array[] = $experience;
