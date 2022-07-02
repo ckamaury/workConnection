@@ -22,8 +22,8 @@ class CrewInfoRefactorer {
             ->setFirstName(ArrayUtils::get('firstName',$data))
             ->setMatricule(ArrayUtils::get('fcNumber',$data))
             ->setIsMale(ArrayUtils::get('sex',$data) == 'M')
-            ->setBirthDate($this->convertDate(ArrayUtils::get('birthDate',$data)))
-            ->setEntryDate($this->convertDate(ArrayUtils::get('entryDate',$data)))
+            ->setBirthDate($this->convertDateForAdmin(ArrayUtils::get('birthDate',$data)))
+            ->setEntryDate($this->convertDateForAdmin(ArrayUtils::get('entryDate',$data)))
             ->setIsInstructor(ArrayUtils::get('instructor',$data))
             ->setAtplDate($this->findATPL(ArrayUtils::get('licenses',$data)));
 
@@ -48,8 +48,8 @@ class CrewInfoRefactorer {
                     ->setId(ArrayUtils::get('quaId',$qualificationItem))
                     ->setQualification(ArrayUtils::get('aircraftTypeCode',$qualificationItem))
                     ->setFunction(ArrayUtils::get('specialityCode',$qualificationItem))
-                    ->setStartDate($this->convertDate((ArrayUtils::get('beginQualifDate',$qualificationItem))))
-                    ->setEndDate($this->convertDate((ArrayUtils::get('endQualifDate',$qualificationItem))));
+                    ->setStartDate($this->convertDatetime((ArrayUtils::get('beginQualifDate',$qualificationItem))))
+                    ->setEndDate($this->convertDatetime((ArrayUtils::get('endQualifDate',$qualificationItem))));
 
                 $array[] = $qualification;
             }
@@ -67,8 +67,8 @@ class CrewInfoRefactorer {
                 ->setId(ArrayUtils::get('opaId',$assignmentItem))
                 ->setBase(ArrayUtils::get('baseCode',$assignmentItem))
                 ->setFunction(ArrayUtils::get('statusCode',$assignmentItem))
-                ->setStartDate($this->convertDate((ArrayUtils::get('beginAssignmentDate',$assignmentItem))))
-                ->setEndDate($this->convertDate((ArrayUtils::get('endAssignmentDate',$assignmentItem))));
+                ->setStartDate($this->convertDatetime((ArrayUtils::get('beginAssignmentDate',$assignmentItem))))
+                ->setEndDate($this->convertDatetime((ArrayUtils::get('endAssignmentDate',$assignmentItem))));
 
             $array[] = $assignment;
         }
@@ -87,7 +87,7 @@ class CrewInfoRefactorer {
                 ->setTakeoff(ArrayUtils::get('nbTakeOff',$experienceItem))
                 ->setLanding(ArrayUtils::get('nbLand',$experienceItem))
                 ->setAircraftSimulator(ArrayUtils::get('aircraftTypeCode',$experienceItem))
-                ->setStartDate($this->convertDate((ArrayUtils::get('experienceDate',$experienceItem))));
+                ->setStartDate($this->convertDatetime((ArrayUtils::get('experienceDate',$experienceItem))));
 
             $array[] = $experience;
         }
@@ -99,21 +99,26 @@ class CrewInfoRefactorer {
         if(is_null($licenses)) return null;
         foreach($licenses as $license){
             if(ArrayUtils::get('licenseType',$license) == 'TL'){
-                return $this->convertDate(ArrayUtils::get('beginValidityDate',$license));
+                return $this->convertDateForAdmin(ArrayUtils::get('beginValidityDate',$license));
             }
-
         }
-
         return NULL;
     }
 
-    private function convertDate($pDate) : ?DateTime{
+    private function convertDateForAdmin($pDate) : ?DateTime{
         if($pDate == 253370764800000){
             return null;
         }
         //FRENCH DATE --> UTC 
         return (new DateTime())->setMicroTimestamp($pDate)->nextDay()->eraseTime();
     }
+    private function convertDatetime($pDate) : ?DateTime{
+        if($pDate == 253370764800000){
+            return null;
+        }
+        return (new DateTime())->setMicroTimestamp($pDate);
+    }
+
     private function sortArray(&$array){
         usort($array, function ($item1,$item2) {
             $time1 = $item1->getStartDate();
