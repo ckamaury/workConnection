@@ -3,6 +3,7 @@
 namespace CkAmaury\WorkConnection\Object\Refactorer;
 
 use CkAmaury\WorkConnection\Object\Refactorer\Object\Indemnity;
+use CkAmaury\PhpMagicFunctions\ArrayUtils;
 
 class IndemnityRefactorer {
 
