@@ -6,7 +6,7 @@ class Indemnity {
 
     private string $airportIata;
     private string $airportCity;
-    private float $currency;
+    private string $currency;
     private float $currencyRate;
     private float $mealCost;
     private float $allowanceCost;
@@ -15,7 +15,6 @@ class Indemnity {
     public function getAirportIata(): string {
         return $this->airportIata;
     }
-
     public function setAirportIata(string $airportIata): self {
         $this->airportIata = $airportIata;
         return $this;
@@ -24,17 +23,15 @@ class Indemnity {
     public function getAirportCity(): string {
         return $this->airportCity;
     }
-
     public function setAirportCity(string $airportCity): self {
         $this->airportCity = $airportCity;
         return $this;
     }
 
-    public function getCurrency(): float {
+    public function getCurrency(): string {
         return $this->currency;
     }
-
-    public function setCurrency(float $currency): self {
+    public function setCurrency(string $currency): self {
         $this->currency = $currency;
         return $this;
     }
@@ -42,7 +39,6 @@ class Indemnity {
     public function getCurrencyRate(): float {
         return $this->currencyRate;
     }
-
     public function setCurrencyRate(float $currencyRate): self {
         $this->currencyRate = $currencyRate;
         return $this;
@@ -51,7 +47,6 @@ class Indemnity {
     public function getMealCost(): float {
         return $this->mealCost;
     }
-
     public function setMealCost(float $mealCost): self {
         $this->mealCost = $mealCost;
         return $this;
@@ -60,7 +55,6 @@ class Indemnity {
     public function getAllowanceCost(): float {
         return $this->allowanceCost;
     }
-
     public function setAllowanceCost(float $allowanceCost): self {
         $this->allowanceCost = $allowanceCost;
         return $this;
@@ -69,7 +63,6 @@ class Indemnity {
     public function getAddText(): string {
         return $this->addText;
     }
-
     public function setAddText(string $addText): self {
         $this->addText = $addText;
         return $this;
