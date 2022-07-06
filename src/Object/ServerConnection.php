@@ -87,6 +87,13 @@ class ServerConnection{
         }
         return $response;
     }
+    public function getDevicesWithCode() : array{
+        $return = array();
+        foreach($this->getDevices()->getValues() as $value){
+            if($value['code']) $return[] = $value;
+        }
+        return $return;
+    }
     private function getEmptyDevice():array{
         $value = array();
         $value['type'] = 'TOKEN';
