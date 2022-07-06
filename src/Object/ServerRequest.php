@@ -53,7 +53,8 @@ class ServerRequest{
 
     private function checkIfNeedToTryAgain(Curl $curl,$response){
         if($this->isCustomCookie && (
-                is_null($response) || array_key_exists('www-authenticate',$response)
+                is_null($response) ||
+                (is_array($response) && array_key_exists('www-authenticate',$response))
             )){
             $curl->getCookie()->delete();
             $this->initCookie();
@@ -83,7 +84,6 @@ class ServerRequest{
         $response = $this->executeAndReturnJson($this->createCurl(ServerAdresses::REQUEST_INFO_CREWMOBILE));
         if($refactor && !is_null($response)){
             $refactorer = new CrewInfoRefactorer();
-            dd($refactorer->refactor($response),$response);
             $response = $refactorer->refactor($response);
         }
         return $response;
@@ -130,29 +130,26 @@ class ServerRequest{
     public function requestReserve(){
 
         $date_start = new DateTime();
+        $date_start->previousDay();
         $date_end = $date_start
             ->clone()
             ->addDays(15)
             ->setTime(23,59,59);
 
-        $options = array(
-            "populationType" => 2,
-            "resultNumber" => 5000,
-            "scheduledDepartureDateFrom" => $date_start->getMicroTimestamp(),
-            "scheduledDepartureDateTo" => $date_end->getMicroTimestamp(),
-            "startOffset" => 0
-        );
 
-        $count_max = $this->requestActivitiesCount($options);
-        $count = 0;
 
         $activities = array();
-        while ($count < $count_max) {
-            $options["resultNumber"] = 500;
-            $options["startOffset"] = $count;
+        while ($date_start->isInfOrEqual($date_end)) {
+            $options = array(
+                "populationType" => 2,
+                "scheduledDepartureDateFrom" => $date_start->getMicroTimestamp(),
+                "scheduledDepartureDateTo" => $date_start->addDays(2)->getMicroTimestamp(),
+                "resultNumber" => 500,
+                "startOffset" => 0
+            );
             $activities = array_merge_recursive($activities,$this->requestActivities($options));
-            $count += count($activities);
         }
+
 
         $reserves = array();
         foreach ($activities as $activity) {
