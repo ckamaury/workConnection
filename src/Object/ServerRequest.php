@@ -6,7 +6,6 @@ use CkAmaury\WorkConnection\Object\Refactorer\CrewInfoRefactorer;
 use CkAmaury\WorkConnection\Object\Refactorer\IcartInfoRefactorer;
 use CkAmaury\PhpCurl\MultiCurl;
 use CkAmaury\PhpDatetime\DateTime;
-use CkAmaury\PhpMagicFunctions\ArrayUtils;
 
 class ServerRequest{
 
@@ -129,26 +128,26 @@ class ServerRequest{
 
     public function requestReserve(){
 
-        $date_start = new DateTime();
-        $date_start->previousDay();
-        $date_end = $date_start
-            ->clone()
-            ->addDays(15)
-            ->setTime(23,59,59);
-
-
+        $dateStart = new DateTime();
+        $dateStart->setTimezone('Europe/Paris')->eraseTime();
+        $dateEnd = $dateStart->clone();
+        $dateEnd->nextMonth()->setDay(1);
+        if($dateStart->getDay() > 25){
+            $dateEnd->nextMonth();
+        }
 
         $activities = array();
-        while ($date_start->isInfOrEqual($date_end)) {
-            $options = array(
-                "populationType" => 2,
-                "scheduledDepartureDateFrom" => $date_start->getMicroTimestamp(),
-                "scheduledDepartureDateTo" => $date_start->addDays(2)->getMicroTimestamp(),
-                "resultNumber" => 500,
-                "startOffset" => 0
-            );
-            $activities = array_merge_recursive($activities,$this->requestActivities($options));
-        }
+        $options = array(
+            "populationType" => 2,
+            "assignedAvailable" => "FO",
+            "scheduledDepartureDateFrom" => $dateStart->getMicroTimestamp(),
+            "scheduledDepartureDateTo" => $dateEnd->getMicroTimestamp(),
+            "resultNumber" => 500,
+            "startOffset" => 0
+        );
+        $activities = $this->requestActivities($options);
+        $options['assignedAvailable'] = 'CPT';
+        $activities = array_merge_recursive($activities,$this->requestActivities($options));
 
 
         $reserves = array();
