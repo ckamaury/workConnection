@@ -67,6 +67,7 @@ class ServerConnection{
 
                 switch($device->displayGaType){
                     case 'PINGID_APP' :
+                    case 'PINGID_PASSCODE' :
                         $value['type'] = 'PINGID_TOUCH';
                         $value['code'] = false;
                         $devices[] = $value;
