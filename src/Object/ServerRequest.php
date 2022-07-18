@@ -2,6 +2,7 @@
 
 namespace CkAmaury\WorkConnection\Object;
 
+use CkAmaury\WorkConnection\Object\Refactorer\Activity\MasterActivityRefactorer;
 use CkAmaury\WorkConnection\Object\Refactorer\CrewInfoRefactorer;
 use CkAmaury\WorkConnection\Object\Refactorer\IcartInfoRefactorer;
 use CkAmaury\PhpCurl\MultiCurl;
@@ -296,5 +297,52 @@ class ServerRequest{
         $curl->addPost($post);
         $curl->setOptions($options);
         return $this->executeAndReturnJson($curl);
+    }
+
+    public function requestActivitiesFull(array $options = array()){
+        $curl = $this->createCurl(ServerAdresses::REQUEST_ACTIVITIES)
+            ->setJsonEncodePost(true)
+            ->addPost($options);
+        $activities = $this->executeAndReturnJson($curl);
+
+        $activities_id = array();
+        foreach($activities as $activity){
+            $activities_id[$activity['actId']] = $activity['activityKey'] ?? null;
+        }
+
+        $requests = [
+            'activities_ground' => ServerAdresses::REQUEST_GROUND_ACTIVITIES_INFO(array_keys($activities_id)),
+            'activities_flight' => ServerAdresses::REQUEST_FLIGHT_ACTIVITIES_INFO(array_keys($activities_id))
+        ];
+
+        $multi = new MultiCurl();
+        foreach($requests as $name => $url){
+            $curl = $this->createCurl($url);
+            $multi->add($name,$curl->getCurl()->getInit());
+        }
+        $multi->execute();
+
+        $response = array();
+        $response['activities'] = $activities;
+        $response = array_merge($response, $multi->responseJson());
+
+        $multi = new MultiCurl();
+        foreach($response['activities_flight'] as $value){
+            $curl = $this->createCurl(ServerAdresses::REQUEST_FLIGHT_ACTIVITIES_CREW($activities_id[$value['activityId']]));
+            $multi->add('activities_crew',$curl->getCurl()->getInit());
+        }
+        $multi->execute();
+        $response = array_merge($response, $multi->responseJson());
+
+        $refactorer = new MasterActivityRefactorer();
+        $refactorer
+            ->setActivities($response['activities'])
+            ->setActivitiesGround($response['activities_ground'])
+            ->setActivitiesFlight($response['activities_flight'])
+            ->setActivitiesCrew(isset($response['activities_crew']) ? $response['activities_crew'] : array());
+
+
+        return $refactorer->refactor();
+
     }
 }
