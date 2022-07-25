@@ -16,15 +16,15 @@ class IcartInfo{
     private bool $isExecutive;
     private DateTime $birthDate;
     private DateTime $entryDate;
-    private ?DateTime $firstOfficerDate;
-    private ?DateTime $captainDate;
-    private ?DateTime $atplDate;
+    private ?DateTime $firstOfficerDate = null;
+    private ?DateTime $captainDate = null;
+    private ?DateTime $atplDate = null;
     private int $class;
-    private ?DateTime $classDate;
+    private ?DateTime $classDate = null;
     private int $grade;
-    private ?DateTime $gradeDate;
+    private ?DateTime $gradeDate = null;
     private int $qualificationNumber;
-    private ?DateTime $amortissementDate;
+    private ?DateTime $amortissementDate = null;
     private ?int $lcpRank;
     private int $tta;
 
