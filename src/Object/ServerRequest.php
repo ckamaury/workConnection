@@ -305,26 +305,53 @@ class ServerRequest{
             ->addPost($options);
         $activities = $this->executeAndReturnJson($curl);
 
+        $response = array();
+        $response['activities'] = $activities;
+
         $activities_id = array();
+        $keys = array();
+        $i = 0;
+
+        $requests['activities_ground'] = array();
+        $requests['activities_flight'] = array();
         foreach($activities as $activity){
             $activities_id[$activity['actId']] = $activity['activityKey'] ?? null;
+            $keys[] = $activity['actId'];
+            $i++;
+            if($i == 500){
+                $requests['activities_ground'][] = ServerAdresses::REQUEST_GROUND_ACTIVITIES_INFO($keys);
+                $requests['activities_flight'][] = ServerAdresses::REQUEST_FLIGHT_ACTIVITIES_INFO($keys);
+                $keys = array();
+                $i = 0;
+            }
         }
 
-        $requests = [
-            'activities_ground' => ServerAdresses::REQUEST_GROUND_ACTIVITIES_INFO(array_keys($activities_id)),
-            'activities_flight' => ServerAdresses::REQUEST_FLIGHT_ACTIVITIES_INFO(array_keys($activities_id))
-        ];
+        $requests['activities_ground'][] = ServerAdresses::REQUEST_GROUND_ACTIVITIES_INFO($keys);
+        $requests['activities_flight'][] = ServerAdresses::REQUEST_FLIGHT_ACTIVITIES_INFO($keys);
 
         $multi = new MultiCurl();
-        foreach($requests as $name => $url){
+        foreach($requests['activities_ground'] as $name => $url){
             $curl = $this->createCurl($url);
             $multi->add($name,$curl->getCurl()->getInit());
         }
         $multi->execute();
+        $response['activities_ground'] = array();
+        foreach ($multi->responseJson() as $item) {
+            $response['activities_ground'] = array_merge($response['activities_ground'], $item);
+        }
 
-        $response = array();
-        $response['activities'] = $activities;
-        $response = array_merge($response, $multi->responseJson());
+        $multi = new MultiCurl();
+        foreach($requests['activities_flight'] as $name => $url){
+            $curl = $this->createCurl($url);
+            $multi->add($name,$curl->getCurl()->getInit());
+        }
+        $multi->execute();
+        $response['activities_flight'] = array();
+        foreach ($multi->responseJson() as $item) {
+            $response['activities_flight'] = array_merge($response['activities_flight'], $item);
+        }
+
+
 
         $multi = new MultiCurl();
         foreach($response['activities_flight'] as $value){
